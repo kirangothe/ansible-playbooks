@@ -3,7 +3,7 @@ resource "aws_instance" "myec2" {
   instance_type          = "t2.micro"
   availability_zone = "ap-southeast-2"
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
-  key_name = "pswain"
+  key_name = "kgsd"
 
   tags = {
     name = "php-mysql"
