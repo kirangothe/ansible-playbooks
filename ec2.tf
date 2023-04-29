@@ -6,7 +6,7 @@ resource "aws_instance" "myec2" {
   key_name = "kgsd"
 
   tags = {
-    name = "php-mysql"
+    Name = "php-mysql"
   }
 
   provisioner "local-exec" {
