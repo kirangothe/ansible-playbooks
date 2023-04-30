@@ -1,0 +1,35 @@
+resource "aws_instance" "myec2" {
+  ami                    = "ami-05f998315cca9bfe3"
+  instance_type          = "t2.micro"
+  availability_zone      = "ap-southeast-2a"
+  vpc_security_group_ids = [aws_security_group.allow_tls.id]
+  key_name               = "kgsd"
+
+  tags = {
+    Name = "terraform-php-mysql"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+        "sudo apt update",
+        "sudo apt install -y openjdk-17-jre-headless gnupg2",
+        "wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -",
+        "echo deb https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list",
+        "sudo touch /etc/apt/trusted.gpg.d/jenkins.gpg",
+        "sudo chmod 644 /etc/apt/trusted.gpg.d/jenkins.gpg",
+        "sudo apt-key --keyring /etc/apt/trusted.gpg.d/jenkins.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 	5BA31D57EF5975CA",
+        "sudo apt update",
+        "sudo apt install -y jenkins",
+        "sudo systemctl start jenkins",
+        "sudo systemctl enable jenkins",
+    ]
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    host        = self.public_ip
+    private_key = file("./kgsd.pem")
+  }
+
+}
